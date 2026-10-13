@@ -1,0 +1,23 @@
+issue_categories_001:
+  id: 1
+  name: Printing
+  project_id: 1
+  assigned_to_id: 2
+
+issue_categories_002:
+  id: 2
+  name: Recipes
+  project_id: 1
+  assigned_to_id:
+
+issue_categories_003:
+  id: 3
+  name: Stock management
+  project_id: 2
+  assigned_to_id:
+
+issue_categories_004:
+  id: 4
+  name: Printing
+  project_id: 2
+  assigned_to_id:

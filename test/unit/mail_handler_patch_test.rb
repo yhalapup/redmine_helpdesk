@@ -8,11 +8,16 @@ class MailHandlerPatchTest < ActiveSupport::TestCase
   fixtures :all
 
   def setup
+    @original_delivery_method = ActionMailer::Base.delivery_method
+
+    ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.deliveries.clear
+
     Setting.notified_events = Redmine::Notifiable.all.collect(&:name)
   end
 
   def teardown
+    ActionMailer::Base.delivery_method = @original_delivery_method
     Setting.clear_cache
   end
 

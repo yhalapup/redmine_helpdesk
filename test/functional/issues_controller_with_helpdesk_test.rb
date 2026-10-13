@@ -75,8 +75,9 @@ class IssuesControllerWithHelpdeskTest < ActionController::TestCase
     get :show, params: { :id => 1 }
     assert_response :success
 
-    assert_select "#history>i", 1
-    assert_select "#history>i", "This answer was sent to the supportclient."
+    assert_select '#history i',
+                  text: 'This answer was sent to the supportclient.',
+                  count: 1
   end
 
   test "history note not added to journal if note has not been sent to owner" do
@@ -89,7 +90,9 @@ class IssuesControllerWithHelpdeskTest < ActionController::TestCase
     get :show, params: { :id => 1 }
     assert_response :success
 
-    assert_select "#history>i", 0
+    assert_select '#history i',
+                  text: 'This answer was sent to the supportclient.',
+                  count: 0
   end
 
   test "send_to_owner checked" do
