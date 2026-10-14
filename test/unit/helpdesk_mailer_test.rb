@@ -37,7 +37,7 @@ class HelpdeskMailerTest < ActionMailer::TestCase
     assert_equal issue.id, email.header['X-Redmine-Issue-Id'].to_s.to_i
     assert_equal issue.author.login, email.header['X-Redmine-Issue-Author'].to_s
     assert_equal issue.assigned_to.login, email.header['X-Redmine-Issue-Assignee'].to_s
-    assert_equal issue.tracker, email.header['X-Redmine-Issue-Tracker'].to_s
+    assert_equal issue.tracker.name, email.header['X-Redmine-Issue-Tracker'].to_s
 
     #assert_equal 'OOF', mail.header['X-Auto-Response-Suppress'].to_s
     #assert_equal 'auto-generated', mail.header['Auto-Submitted'].to_s
@@ -162,10 +162,14 @@ class HelpdeskMailerTest < ActionMailer::TestCase
     assert_equal 1, attachments_length
     filename = mail.attachments[0].filename
     assert_equal "source.rb", filename
-    content = mail.attachments[0].body.to_s
-    original_content = File.open(
-        Attachment.find(
-            Journal.find(3).details.first.prop_key).diskfile).read
+    content = mail.attachments[0].decoded
+
+    original_content = File.binread(
+      Attachment.find(
+        Journal.find(3).details.first.prop_key
+      ).diskfile
+    )
+
     assert_equal original_content, content
   end
 end

@@ -3,6 +3,9 @@
 # uses this method-name too in their mailer. This is the reason
 # why we need our own Mailer class.
 #
+
+require 'base64'
+
 class HelpdeskMailer < ActionMailer::Base
   helper :application
 
@@ -25,7 +28,8 @@ class HelpdeskMailer < ActionMailer::Base
 
     redmine_headers 'Project' => issue.project.identifier,
                     'Issue-Id' => issue.id,
-                    'Issue-Author' => issue.author.login
+                    'Issue-Author' => issue.author.login,
+                    'Issue-Tracker' => issue.tracker.name
     redmine_headers 'Issue-Assignee' => issue.assigned_to.login if issue.assigned_to
     message_id issue
     references issue
@@ -53,7 +57,11 @@ class HelpdeskMailer < ActionMailer::Base
         if d.property == 'attachment'
           a = Attachment.find(d.prop_key)
           begin
-            attachments[a.filename] = File.binread(a.diskfile)
+            attachments[a.filename] = {
+              mime_type: a.content_type.presence || 'application/octet-stream',
+              encoding: 'base64',
+              content: Base64.strict_encode64(File.binread(a.diskfile))
+            }
           rescue
             # ignore rescue
           end
