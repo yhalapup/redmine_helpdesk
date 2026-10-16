@@ -17,7 +17,7 @@ class JournalPatchTest < ActiveSupport::TestCase
 
   def test_notification_not_sent_when_send_to_owner_false
     HelpdeskMailer.any_instance.expects(:email_to_supportclient).never
-    Mailer.any_instance.stubs(:deliver_issue_edit).returns(true)
+    Mailer.stubs(:deliver_issue_edit).returns(true)
 
     issue = Issue.find(1)
     journal = issue.journals.first
@@ -29,7 +29,7 @@ class JournalPatchTest < ActiveSupport::TestCase
 
   def test_notification_not_sent_when_notes_length_zero
     HelpdeskMailer.any_instance.expects(:email_to_supportclient).never
-    Mailer.any_instance.stubs(:deliver_issue_edit).returns(true)
+    Mailer.stubs(:deliver_issue_edit).returns(true)
 
     issue = Issue.find(1)
     journal = issue.journals.first
@@ -42,7 +42,7 @@ class JournalPatchTest < ActiveSupport::TestCase
 
   def test_notification_note_sent_when_owner_email_blank
     HelpdeskMailer.any_instance.expects(:email_to_supportclient).never
-    Mailer.any_instance.stubs(:deliver_issue_edit).returns(true)
+    Mailer.stubs(:deliver_issue_edit).returns(true)
 
     issue = Issue.find(1)
     journal = issue.journals.first
@@ -59,7 +59,7 @@ class JournalPatchTest < ActiveSupport::TestCase
   end
 
   def test_notification_sent
-    Mailer.any_instance.stubs(:deliver_issue_edit).returns(true)
+    Mailer.stubs(:deliver_issue_edit).returns(true)
 
     issue = Issue.find(1)
     journal = issue.journals.first

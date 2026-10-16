@@ -37,7 +37,7 @@ class MacroExpanderTest < ActionMailer::TestCase
                 :text      => 'text'
             }).deliver
     assert !ActionMailer::Base.deliveries.empty?
-    assert "text\n\n#{issue.id}, #{issue.subject}, #{issue.tracker}, #{issue.status}", email.body.to_s
+    assert_equal "text\n\n#{issue.id}, #{issue.subject}, #{issue.tracker}, #{issue.status}", email.body.to_s
   end
 
   def test_expand_project
@@ -57,7 +57,7 @@ class MacroExpanderTest < ActionMailer::TestCase
                 :text      =>'text'
             }).deliver
     assert !ActionMailer::Base.deliveries.empty?
-    assert "text\n\n#{issue.project.name}", email.body.to_s
+    assert_equal "text\n\n#{issue.project.name}", email.body.to_s
   end
 
   def test_expand_user
@@ -78,7 +78,7 @@ class MacroExpanderTest < ActionMailer::TestCase
             }).deliver
     assert !ActionMailer::Base.deliveries.empty?
     user = Journal.find(1).user
-    assert "text\n\n#{user.name}, #{user.firstname}, #{user.lastname}, #{user.mail}, #{user.login}", email.body.to_s
+    assert_equal "text\n\n#{user.name}, #{user.firstname}, #{user.lastname}, #{user.mail}, #{user.login}", email.body.to_s
   end
 
   def test_expand_user_cfs_w_not_existing
@@ -91,20 +91,19 @@ class MacroExpanderTest < ActionMailer::TestCase
     custom_value.value = "##user-cf-title##, ##user-cf-motto##, ##user-cf-invalid##."
     custom_value.save
 
-    title = CustomField.find_by_name('title')
-    custom_value = CustomValue.new(
-      :customized_id => user.id,
-      :custom_field_id => title.id,
-      :value => "junior senior"
+    title = UserCustomField.find_by!(name: 'title')
+
+    user.custom_values.create!(
+      custom_field: title,
+      value: 'junior senior'
     )
-    custom_value.save
-    motto = CustomField.find_by_name('motto')
-    custom_value = CustomValue.new(
-      :customized_id => user.id,
-      :custom_field_id => motto.id,
-      :value => "epic motto"
+
+    motto = UserCustomField.find_by!(name: 'motto')
+
+    user.custom_values.create!(
+      custom_field: motto,
+      value: 'epic motto'
     )
-    custom_value.save
 
     email = HelpdeskMailer.
         email_to_supportclient(
@@ -114,7 +113,7 @@ class MacroExpanderTest < ActionMailer::TestCase
              :text      =>'text'
             }).deliver
     assert !ActionMailer::Base.deliveries.empty?
-    assert "text\n\njunior senior, epic motto, .", email.body.to_s
+    assert_equal "text\n\njunior senior, epic motto, .", email.body.to_s
   end
 
   def test_expand_user_no_cfs
@@ -136,7 +135,7 @@ class MacroExpanderTest < ActionMailer::TestCase
                 :text      => 'text'
             }).deliver
     assert !ActionMailer::Base.deliveries.empty?
-    assert "text\n\n, , .", email.body.to_s
+    assert_equal "text\n\n, , .", email.body.to_s
   end
 
   def test_expand_base
@@ -158,6 +157,6 @@ class MacroExpanderTest < ActionMailer::TestCase
                 :text      => 'text'
             }).deliver
     assert !ActionMailer::Base.deliveries.empty?
-    assert "text\n\n#{t1}", email.body.to_s
+    assert_equal "text\n\n#{t1}", email.body.to_s
   end
 end
