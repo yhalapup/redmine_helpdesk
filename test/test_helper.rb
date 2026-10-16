@@ -29,5 +29,9 @@ class TestHelper
 end
 
 class ActiveSupport::TestCase
-  self.fixture_path = TestHelper.fixture_path
+  if respond_to?(:fixture_paths=)
+    self.fixture_paths = [TestHelper.fixture_path, *fixture_paths].uniq
+  else
+    self.fixture_path = TestHelper.fixture_path
+  end
 end
