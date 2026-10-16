@@ -49,12 +49,14 @@ module MacroExpander
     end
 
     def expand_user_cf(user)
-      CustomField.where(
-        "type = 'UserCustomField'").each do |user_cf|
+      CustomField.where(type: 'UserCustomField').each do |user_cf|
         cf_name = user_cf.name.downcase.gsub(' ', '-')
         user_cf_cv = user.custom_value_for(user_cf).try(:value)
+
         @string.gsub!("##user-cf-#{cf_name}##", user_cf_cv) unless user_cf_cv.nil?
       end
+
+      @string.gsub!(/##user-cf-[^#]+##/i, '')
     end
 
     def expand_base
